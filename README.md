@@ -73,7 +73,7 @@ VITE_API_KEY=your_api_key_here
 
 Start the development server:
 ```bash
-npm run dev
+npm run dev:all
 ```
 
 The application will be available at `http://localhost:5173/`
