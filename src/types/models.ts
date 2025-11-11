@@ -1,5 +1,5 @@
 // Model identifiers
-export type ModelId = 'wan2.5-t2i-preview' | 'wan2.5-i2i-preview' | 'wan2.5-i2v-preview' | 'wan2.2-kf2v-flash';
+export type ModelId = 'wan2.5-t2i-preview' | 'wan2.5-i2i-preview' | 'wan2.5-i2v-preview' | 'wan2.5-t2v-preview' | 'wan2.2-kf2v-flash' | 'qwen-image-edit-plus';
 
 // API types
 export type ApiType = 'sync' | 'async';
@@ -71,6 +71,18 @@ export interface I2VFormData {
   seed?: number;
 }
 
+export interface T2VFormData {
+  prompt: string;
+  negative_prompt?: string;
+  size: string;
+  duration: number;
+  audio: boolean;
+  audio_url?: string;
+  prompt_extend: boolean;
+  watermark: boolean;
+  seed?: number;
+}
+
 export interface KF2VFormData {
   first_frame_url: string;
   last_frame_url?: string;
@@ -83,7 +95,16 @@ export interface KF2VFormData {
   seed?: number;
 }
 
-export type FormData = T2IFormData | I2IFormData | I2VFormData | KF2VFormData;
+export interface QwenI2IFormData {
+  prompt: string;
+  images: string[];
+  negative_prompt?: string;
+  n: number;
+  watermark: boolean;
+  seed?: number;
+}
+
+export type FormData = T2IFormData | I2IFormData | I2VFormData | T2VFormData | KF2VFormData | QwenI2IFormData;
 
 // Uploaded image metadata
 export interface UploadedImage {

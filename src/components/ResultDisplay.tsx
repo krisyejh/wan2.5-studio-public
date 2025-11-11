@@ -3,12 +3,21 @@ import { downloadFile, generateDownloadFilename } from '../utils/imageUtils';
 import './ResultDisplay.css';
 
 export function ResultDisplay() {
-  const { state, setResult } = useApp();
+  const { state, selectModel, setResult } = useApp();
 
   if (!state.result) return null;
 
   const { type, url, urls, metadata } = state.result;
   const imageUrls = urls && urls.length > 0 ? urls : [url];
+
+  console.log('=== RESULT DISPLAY DEBUG ===');
+  console.log('Result type:', type);
+  console.log('Result url:', url);
+  console.log('Result urls:', urls);
+  console.log('Computed imageUrls:', imageUrls);
+  console.log('imageUrls length:', imageUrls.length);
+  console.log('Will show gallery:', imageUrls.length > 1);
+  console.log('============================');
 
   const handleDownload = async (imageUrl: string, index?: number) => {
     try {
@@ -41,8 +50,18 @@ export function ResultDisplay() {
     setResult(null);
   };
 
+  const handleBackToModels = () => {
+    selectModel(null);
+  };
+
   return (
     <div className="result-display">
+      <div className="back-to-models-container">
+        <button onClick={handleBackToModels} className="back-to-models-btn">
+          ← Back to Models
+        </button>
+      </div>
+      
       <div className="result-header">
         <h3>Generated Result{imageUrls.length > 1 ? 's' : ''}</h3>
         <p className="expiration-warning">

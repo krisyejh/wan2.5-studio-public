@@ -1,6 +1,8 @@
 import { createContext, useContext, useState, type ReactNode } from 'react';
 import type { ModelId, GeneratedResult, TaskStatus } from '../types';
 
+export type SectionType = 'models' | 'tools' | 'agents' | 'recent';
+
 interface TaskState {
   taskId?: string;
   status?: TaskStatus;
@@ -9,6 +11,7 @@ interface TaskState {
 }
 
 interface AppState {
+  activeSection: SectionType;
   selectedModel: ModelId | null;
   formData: Record<string, any>;
   uploadedImages: Record<string, Record<string, any[]>>; // Changed to support per-field images
@@ -20,6 +23,7 @@ interface AppState {
 
 interface AppContextType {
   state: AppState;
+  setActiveSection: (section: SectionType) => void;
   selectModel: (modelId: ModelId | null) => void;
   updateFormData: (modelId: string, data: any) => void;
   setUploadedImages: (modelId: string, fieldName: string, images: any[]) => void;
@@ -31,6 +35,7 @@ interface AppContextType {
 }
 
 const initialState: AppState = {
+  activeSection: 'models',
   selectedModel: null,
   formData: {},
   uploadedImages: {},
@@ -44,6 +49,13 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AppState>(initialState);
+
+  const setActiveSection = (section: SectionType) => {
+    setState(prev => ({
+      ...prev,
+      activeSection: section,
+    }));
+  };
 
   const selectModel = (modelId: ModelId | null) => {
     setState(prev => ({
@@ -117,6 +129,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     <AppContext.Provider
       value={{
         state,
+        setActiveSection,
         selectModel,
         updateFormData,
         setUploadedImages,
