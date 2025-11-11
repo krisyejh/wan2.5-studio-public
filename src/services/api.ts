@@ -2,7 +2,10 @@ import type {
   T2IRequest,
   I2IRequest,
   I2VRequest,
+  T2VRequest,
   KF2VRequest,
+  QwenI2IRequest,
+  QwenI2IResponse,
   AsyncTaskCreationResponse,
   AsyncTaskStatusResponse,
   ApiErrorResponse,
@@ -59,7 +62,7 @@ async function handleResponse<T>(response: Response): Promise<T> {
  * Text-to-Image API call (Asynchronous)
  */
 export async function generateT2I(request: T2IRequest): Promise<AsyncTaskCreationResponse> {
-  const endpoint = '/api/api/v1/services/aigc/text2image/image-synthesis';
+  const endpoint = '/api/v1/services/aigc/text2image/image-synthesis';
 
   const response = await fetch(endpoint, {
     method: 'POST',
@@ -74,7 +77,7 @@ export async function generateT2I(request: T2IRequest): Promise<AsyncTaskCreatio
  * Image-to-Image API call (Asynchronous)
  */
 export async function generateI2I(request: I2IRequest): Promise<AsyncTaskCreationResponse> {
-  const endpoint = '/api/api/v1/services/aigc/image2image/image-synthesis';
+  const endpoint = '/api/v1/services/aigc/image2image/image-synthesis';
 
   const response = await fetch(endpoint, {
     method: 'POST',
@@ -89,7 +92,22 @@ export async function generateI2I(request: I2IRequest): Promise<AsyncTaskCreatio
  * Image-to-Video API call (Asynchronous)
  */
 export async function generateI2V(request: I2VRequest): Promise<AsyncTaskCreationResponse> {
-  const endpoint = '/api/api/v1/services/aigc/video-generation/video-synthesis';
+  const endpoint = '/api/v1/services/aigc/video-generation/video-synthesis';
+
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: getHeaders(true),
+    body: JSON.stringify(request),
+  });
+
+  return handleResponse<AsyncTaskCreationResponse>(response);
+}
+
+/**
+ * Text-to-Video API call (Asynchronous)
+ */
+export async function generateT2V(request: T2VRequest): Promise<AsyncTaskCreationResponse> {
+  const endpoint = '/api/v1/services/aigc/video-generation/video-synthesis';
 
   const response = await fetch(endpoint, {
     method: 'POST',
@@ -104,7 +122,7 @@ export async function generateI2V(request: I2VRequest): Promise<AsyncTaskCreatio
  * Keyframe-to-Video API call (Asynchronous)
  */
 export async function generateKF2V(request: KF2VRequest): Promise<AsyncTaskCreationResponse> {
-  const endpoint = '/api/api/v1/services/aigc/image2video/video-synthesis';
+  const endpoint = '/api/v1/services/aigc/image2video/video-synthesis';
 
   const response = await fetch(endpoint, {
     method: 'POST',
@@ -113,6 +131,21 @@ export async function generateKF2V(request: KF2VRequest): Promise<AsyncTaskCreat
   });
 
   return handleResponse<AsyncTaskCreationResponse>(response);
+}
+
+/**
+ * Qwen Image-to-Image API call (Synchronous)
+ */
+export async function generateQwenI2I(request: QwenI2IRequest): Promise<QwenI2IResponse> {
+  const endpoint = '/api/v1/services/aigc/multimodal-generation/generation';
+
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: getHeaders(false), // Synchronous - no async header
+    body: JSON.stringify(request),
+  });
+
+  return handleResponse<QwenI2IResponse>(response);
 }
 
 /**
@@ -279,6 +312,28 @@ export function buildI2VRequest(formData: any): I2VRequest {
     },
     parameters: {
       resolution: formData.resolution || '480P',
+      duration: formData.duration || 5,
+      prompt_extend: formData.prompt_extend ?? true,
+      audio: formData.audio ?? true,
+      watermark: formData.watermark ?? false,
+      seed: formData.seed || undefined,
+    },
+  };
+}
+
+/**
+ * Build T2V request from form data
+ */
+export function buildT2VRequest(formData: any): T2VRequest {
+  return {
+    model: 'wan2.5-t2v-preview',
+    input: {
+      prompt: formData.prompt,
+      negative_prompt: formData.negative_prompt || undefined,
+      audio_url: formData.audio_url || undefined,
+    },
+    parameters: {
+      size: formData.size || '832*480',
       duration: formData.duration || 10,
       prompt_extend: formData.prompt_extend ?? true,
       audio: formData.audio ?? true,
@@ -304,6 +359,42 @@ export function buildKF2VRequest(formData: any): KF2VRequest {
     parameters: {
       resolution: formData.resolution || '720P',
       prompt_extend: formData.prompt_extend ?? true,
+      watermark: formData.watermark ?? false,
+      seed: formData.seed || undefined,
+    },
+  };
+}
+
+/**
+ * Build Qwen I2I request from form data
+ */
+export function buildQwenI2IRequest(formData: any): QwenI2IRequest {
+  // Build content array with images and text
+  const content: Array<{image?: string; text?: string}> = [];
+  
+  // Add images
+  if (formData.images && Array.isArray(formData.images)) {
+    formData.images.forEach((image: string) => {
+      content.push({ image });
+    });
+  }
+  
+  // Add text prompt
+  content.push({ text: formData.prompt });
+
+  return {
+    model: 'qwen-image-edit-plus',
+    input: {
+      messages: [
+        {
+          role: 'user',
+          content,
+        },
+      ],
+    },
+    parameters: {
+      n: formData.n || 1,
+      negative_prompt: formData.negative_prompt || ' ',
       watermark: formData.watermark ?? false,
       seed: formData.seed || undefined,
     },

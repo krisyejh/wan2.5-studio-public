@@ -7,7 +7,7 @@
 .app-header {
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
   color: white;
-  padding: 2rem;
+  padding: 1.5rem 2rem;
   text-align: center;
   box-shadow: var(--shadow-md);
 }
@@ -25,10 +25,44 @@
 
 .app-main {
   flex: 1;
-  max-width: 1200px;
   width: 100%;
   margin: 0 auto;
+  padding: 0;
+  background: #f7fafc;
+  min-height: calc(100vh - 200px);
+}
+
+.models-section {
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 2rem;
+}
+
+.back-to-models-container {
+  margin-bottom: 1.5rem;
+}
+
+.back-to-models-btn {
+  background: white;
+  color: var(--primary-color);
+  padding: 0.6rem 1.5rem;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.back-to-models-btn:hover {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
 }
 
 .form-container {
@@ -39,31 +73,17 @@
   margin-top: 2rem;
 }
 
-.model-breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+.model-header {
   margin-bottom: 2rem;
   padding-bottom: 1rem;
   border-bottom: 2px solid var(--border-color);
 }
 
-.back-btn {
-  background: transparent;
-  color: var(--primary-color);
-  padding: 0.5rem 1rem;
-  border-radius: var(--radius-sm);
-  font-weight: 500;
-}
-
-.back-btn:hover {
-  background: rgba(79, 70, 229, 0.1);
-}
-
-.current-model {
-  font-size: 1.25rem;
+.model-title {
+  font-size: 1.5rem;
   font-weight: 600;
   color: var(--text-primary);
+  margin: 0;
 }
 
 .error-container {

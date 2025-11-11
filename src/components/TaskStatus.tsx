@@ -73,7 +73,12 @@ export function TaskStatus() {
     return (
       <div className="task-status completed">
         <div className="status-icon success">✓</div>
-        <p className="status-message">Generation complete!</p>
+        <p className="status-message">
+          Generation complete!
+          {state.taskState.taskId && (
+            <span className="inline-task-id"> Task ID: <code>{state.taskState.taskId}</code></span>
+          )}
+        </p>
       </div>
     );
   }
@@ -82,7 +87,12 @@ export function TaskStatus() {
     return (
       <div className="task-status failed">
         <div className="status-icon error">✕</div>
-        <p className="status-message">Generation failed</p>
+        <p className="status-message">
+          Generation failed
+          {state.taskState.taskId && (
+            <span className="inline-task-id"> Task ID: <code>{state.taskState.taskId}</code></span>
+          )}
+        </p>
         <p className="error-detail">{state.error}</p>
       </div>
     );

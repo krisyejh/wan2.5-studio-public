@@ -49,6 +49,23 @@ export interface I2VRequest {
   };
 }
 
+export interface T2VRequest {
+  model: string;
+  input: {
+    prompt: string;
+    negative_prompt?: string;
+    audio_url?: string;
+  };
+  parameters: {
+    size?: string;
+    duration?: number;
+    prompt_extend?: boolean;
+    audio?: boolean;
+    watermark?: boolean;
+    seed?: number;
+  };
+}
+
 export interface KF2VRequest {
   model: string;
   input: {
@@ -66,7 +83,26 @@ export interface KF2VRequest {
   };
 }
 
-export type ApiRequest = T2IRequest | I2IRequest | I2VRequest | KF2VRequest;
+export interface QwenI2IRequest {
+  model: string;
+  input: {
+    messages: Array<{
+      role: string;
+      content: Array<{
+        image?: string;
+        text?: string;
+      }>;
+    }>;
+  };
+  parameters: {
+    n?: number;
+    negative_prompt?: string;
+    watermark?: boolean;
+    seed?: number;
+  };
+}
+
+export type ApiRequest = T2IRequest | I2IRequest | I2VRequest | T2VRequest | KF2VRequest | QwenI2IRequest;
 
 // API Response types
 export interface T2IResponse {
@@ -90,6 +126,26 @@ export interface T2IResponse {
   usage: {
     image_count: number;
     width: number;
+    height: number;
+  };
+}
+
+export interface QwenI2IResponse {
+  request_id: string;
+  output: {
+    choices: Array<{
+      finish_reason: string;
+      message: {
+        role: string;
+        content: Array<{
+          image: string;
+        }>;
+      };
+    }>;
+  };
+  usage: {
+    width: number;
+    image_count: number;
     height: number;
   };
 }

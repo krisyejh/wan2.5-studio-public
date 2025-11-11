@@ -6,6 +6,33 @@
   box-shadow: var(--shadow-md);
 }
 
+.result-display .back-to-models-container {
+  margin-bottom: 1.5rem;
+}
+
+.result-display .back-to-models-btn {
+  background: white;
+  color: var(--primary-color);
+  padding: 0.6rem 1.5rem;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.result-display .back-to-models-btn:hover {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
 .result-header {
   text-align: center;
   margin-bottom: 2rem;
@@ -135,12 +162,13 @@
 }
 
 .download-btn {
-  background: var(--secondary-color);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
+  border: none;
 }
 
 .download-btn:hover {
-  background: #059669;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
 }

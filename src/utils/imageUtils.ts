@@ -166,22 +166,44 @@ export function formatFileSize(bytes: number): string {
 
 /**
  * Download file from URL
+ * For external URLs (OSS), use direct link to bypass CORS
+ * For local/proxied URLs, use fetch + blob
  */
 export async function downloadFile(url: string, filename: string): Promise<void> {
   try {
-    const response = await fetch(url);
-    const blob = await response.blob();
-    const blobUrl = URL.createObjectURL(blob);
+    // Check if URL is external (OSS or other external sources)
+    const isExternal = url.startsWith('http://') || url.startsWith('https://');
+    
+    if (isExternal && !url.includes(window.location.hostname)) {
+      // For external URLs, use direct download link to bypass CORS
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      link.target = '_blank'; // Fallback if download attribute doesn't work
+      link.rel = 'noopener noreferrer';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      // For local/proxied URLs, use fetch + blob method
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
 
-    const link = document.createElement('a');
-    link.href = blobUrl;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
 
-    URL.revokeObjectURL(blobUrl);
+      URL.revokeObjectURL(blobUrl);
+    }
   } catch (error) {
+    console.error('Download error:', error);
     throw new Error('Failed to download file');
   }
 }
